@@ -43,6 +43,15 @@
   const itemPrice = 29.90;
   const itemAmountInSen = 2990; // Harga item dalam sen
 
+  // Senarai Postcode Malaysia
+  const westMalaysiaPostcodes = [
+    "10000", "10100", "10200", "10300", "10400", "10500", "10600", "10700", "10800", "10900", "11000", "20000", "20100", "20200", "20300", "20400", "20500", "20600", "30000", "30100", "30200", "30300", "30400", "40000", "40100", "40200", "40300", "40400", "40500", "40600", "50000", "50100", "50200", "50300", "50400", "50500", "60000", "60100", "60200", "60300", "60400", "60500", "70000", "70100", "70200", "70300", "70400", "70500", "80000", "80100", "80200", "80300", "80400", "80500", "90000", "90100", "90200", "90300", "90400", "90500"
+  ];
+
+  const eastMalaysiaPostcodes = [
+    "88000", "88100", "88200", "88300", "88400", "88500", "88600", "88700", "88800", "88900", "89000", "89100", "89200", "89300", "89400", "89500", "89600", "89700", "89800", "89900", "90000", "90100", "90200", "90300", "90400", "90500", "90600", "90700", "90800", "90900", "91000", "91100", "91200", "91300", "91400", "91500", "93000", "93100", "93200", "93300", "93400", "93500", "93600", "93700", "93800", "93900"
+  ];
+
   // Kemaskini shipping fee dan total amount apabila pengguna memilih penghantaran
   document.getElementById("postcode").addEventListener("input", function () {
     const postcode = document.getElementById("postcode").value.trim(); // Pastikan tiada ruang kosong
@@ -50,16 +59,6 @@
     console.log("Postcode entered:", postcode);  // Debug: pastikan postcode diset dengan betul
 
     let shipping = 0;
-
-    // Senarai Postcode untuk Semenanjung Malaysia (1xxxx - 9xxxx)
-    const westMalaysiaPostcodes = [
-      '10000', '20000', '30000', '40000', '50000', '60000', '70000', '80000', '90000' // Add more postcodes as required
-    ];
-
-    // Senarai Postcode untuk Sabah & Sarawak (8xxxx - 9xxxx)
-    const eastMalaysiaPostcodes = [
-      '88000', '93000', '94000', '95000' // Add more postcodes as required
-    ];
 
     // Semenanjung Malaysia (RM10 shipping)
     if (westMalaysiaPostcodes.includes(postcode)) {
@@ -72,9 +71,9 @@
 
     // Kemas kini shipping fee dan total amount
     if (shipping > 0) {
-      document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2);
-      const total = itemPrice + shipping / 100;
-      document.getElementById("totalAmount").textContent = total.toFixed(2);
+      document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2); // Kemaskini penghantaran
+      const total = itemPrice + shipping / 100; // Kira jumlah total
+      document.getElementById("totalAmount").textContent = total.toFixed(2); // Kemaskini total
     } else {
       // Jika tidak sah, set penghantaran kepada RM0
       document.getElementById("shippingFee").textContent = "0.00";
@@ -108,4 +107,11 @@
       body: JSON.stringify(body)
     });
 
-    const data = await res.json()
+    const data = await res.json();
+    if (data?.url) {
+      window.location.href = data.url; // Redirect ke halaman pembayaran Stripe
+    } else {
+      alert("Error creating payment session.");
+    }
+  }
+</script>
