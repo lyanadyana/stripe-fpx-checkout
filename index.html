@@ -51,15 +51,23 @@
 
     let shipping = 0;
 
-    // Semenanjung Malaysia (Postcode bermula dengan 1-9)
-    if (postcode && postcode.match(/^[1-9][0-9]{3}$/)) {
-      // Semenanjung Malaysia, RM10
-      shipping = 1000;
+    // Senarai Postcode untuk Semenanjung Malaysia (1xxxx - 9xxxx)
+    const westMalaysiaPostcodes = [
+      '10000', '20000', '30000', '40000', '50000', '60000', '70000', '80000', '90000' // Add more postcodes as required
+    ];
+
+    // Senarai Postcode untuk Sabah & Sarawak (8xxxx - 9xxxx)
+    const eastMalaysiaPostcodes = [
+      '88000', '93000', '94000', '95000' // Add more postcodes as required
+    ];
+
+    // Semenanjung Malaysia (RM10 shipping)
+    if (westMalaysiaPostcodes.includes(postcode)) {
+      shipping = 1000; // RM10 = 1000 sen
     } 
-    // Sabah & Sarawak (Postcode bermula dengan 8 atau 9)
-    else if (postcode && (postcode.startsWith("8") || postcode.startsWith("9"))) {
-      // Sabah & Sarawak, RM19
-      shipping = 1900;
+    // Sabah & Sarawak (RM19 shipping)
+    else if (eastMalaysiaPostcodes.includes(postcode)) {
+      shipping = 1900; // RM19 = 1900 sen
     }
 
     // Kemas kini shipping fee dan total amount
@@ -100,11 +108,4 @@
       body: JSON.stringify(body)
     });
 
-    const data = await res.json();
-    if (data?.url) {
-      window.location.href = data.url; // Redirect ke halaman pembayaran Stripe
-    } else {
-      alert("Error creating payment session.");
-    }
-  }
-</script>
+    const data = await res.json()
