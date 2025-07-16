@@ -7,10 +7,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { amount, method, product } = req.body;
+  const { amount, method, product, name, phone, address } = req.body;
 
-  if (!amount || !method) {
-    return res.status(400).json({ message: 'Missing payment method or amount' });
+  if (!amount || !method || !name || !phone || !address) {
+    return res.status(400).json({ message: 'Missing required fields' });
   }
 
   // Senarai kaedah pembayaran yang disokong
@@ -29,15 +29,15 @@ export default async function handler(req, res) {
           price_data: {
             currency: 'myr', // Mata wang yang digunakan
             product_data: {
-              name: product || "Product", // Nama produk, jika tiada gunakan "Product"
+              name: product || "Product", // Nama produk
             },
-            unit_amount: amount, // Jumlah bayaran
+            unit_amount: amount, // Jumlah bayaran dalam sen
           },
           quantity: 1, // Kuantiti produk
         },
       ],
       mode: 'payment', // Mod pembayaran
-      success_url: 'https://www.lyanadyana.com/success', // URL kejayaan
+      success_url: `https://www.lyanadyana.com/success?name=${name}&phone=${phone}&address=${address}`, // URL kejayaan dengan parameter
       cancel_url: 'https://www.lyanadyana.com/cancel', // URL pembatalan
     });
 
