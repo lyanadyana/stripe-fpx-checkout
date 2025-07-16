@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   // Senarai kaedah pembayaran yang disokong
-  const allowedMethods = ['card', 'fpx', 'grabpay', 'alipay'];
+  const allowedMethods = ['cards', 'fpx', 'grabpay', 'alipay'];
 
   // Semak jika kaedah pembayaran yang diterima sah
   if (!allowedMethods.includes(method)) {
