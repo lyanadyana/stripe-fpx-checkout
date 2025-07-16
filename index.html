@@ -1,109 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Custom Checkout</title>
-</head>
-<body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto;">
-  <h2>Checkout</h2>
+<div style="max-width: 600px; margin: auto; font-family: sans-serif; padding: 24px; border: 1px solid #eee; border-radius: 12px;">
+  <h2>Shipping Information</h2>
+  <input id="fullName" placeholder="Full Name" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <input id="address" placeholder="Shipping Address" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
 
-  <!-- Borang Penghantaran -->
-  <form id="shippingForm" onsubmit="submitShipping(event)">
-    <div>
-      <label for="name">Nama:</label>
-      <input type="text" id="name" name="name" required>
-    </div>
+  <h3>Delivery Option</h3>
+  <select id="deliveryOption" style="width: 100%; margin-bottom: 20px; padding: 8px;">
+    <option value="0">Standard Shipping (RM0)</option>
+    <option value="800">Express Shipping (RM8.00)</option>
+  </select>
 
-    <div>
-      <label for="phone">Nombor Telefon:</label>
-      <input type="text" id="phone" name="phone" required>
-    </div>
+  <h3>Order Summary</h3>
+  <p>Item: <strong>PLAIN SQUARE - BREEZY BEACH PLUM</strong></p>
+  <p>Item Price: <strong>RM <span id="itemAmount">29.90</span></strong></p>
+  <p>Shipping: <strong>RM <span id="shippingFee">0.00</span></strong></p>
+  <p>Total: <strong>RM <span id="totalAmount">29.90</span></strong></p>
 
-    <div>
-      <label for="address">Alamat:</label>
-      <textarea id="address" name="address" required></textarea>
-    </div>
-
-    <div>
-      <label for="amount">Jumlah Bayaran (RM):</label>
-      <input type="number" id="amount" name="amount" required disabled> <!-- Disabled untuk pengguna -->
-    </div>
-
-    <button type="submit">Next</button>
-  </form>
-
-  <div id="paymentOptions" style="display: none; margin-top: 20px;">
-    <p><strong>Total: RM <span id="totalDisplay">-</span></strong></p>
-    <button onclick="pay('fpx')">Bayar dengan FPX</button>
-    <button onclick="pay('card')">Bayar dengan Kad Kredit/Debit</button>
+  <h3 style="margin-top: 24px;">Choose Payment Method</h3>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;">
+    <button onclick="pay('fpx')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687676bd4a954276e81fb144/1752594109396/FPX-Logo.png" height="24" alt="FPX"></button>
+    <button onclick="pay('link')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/6876772becbe083116a301e0/1752594219606/duitnow-logo-png_seeklogo-557261.png" height="24" alt="DuitNow"></button>
+    <button onclick="pay('grabpay')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/68767787089e8e235490babc/1752594311288/GrabPay_Final_Logo_RGB_green_StackedVersion-01.png" height="24" alt="GrabPay"></button>
+    <button onclick="pay('alipay')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677c00057f916c516c4ca/1752594368748/62b1e77b56b6848f8bec9031.png" height="24" alt="Alipay"></button>
+    <button onclick="pay('card')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677f99df7ce1477a1b709/1752594425883/credit-or-debit-card-visa-mastercard-logo-hd-transparent-png--comdlpng6953127.jpg" height="24" alt="Card"></button>
   </div>
+</div>
 
-  <script>
-    // Fungsi untuk menyerahkan borang penghantaran dan tunjukkan pilihan pembayaran
-    function submitShipping(event) {
-      event.preventDefault();
+<style>
+  .pay-btn {
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+  }
+  .pay-btn:hover {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+  .pay-btn img {
+    display: block;
+    margin: auto;
+  }
+</style>
 
-      // Dapatkan data dari borang penghantaran
-      const name = document.getElementById("name").value;
-      const phone = document.getElementById("phone").value;
-      const address = document.getElementById("address").value;
-      const amount = document.getElementById("amount").value;
+<script>
+  const itemPrice = 29.90;
+  const itemAmountInSen = 2990; // Harga item dalam sen
 
-      if (!name || !phone || !address || !amount) {
-        alert("Sila lengkapkan semua maklumat penghantaran.");
-        return;
+  // Kemaskini shipping fee dan total amount apabila pengguna memilih penghantaran
+  document.getElementById("deliveryOption").addEventListener("change", function () {
+    const shipping = parseFloat(this.value); // Dapatkan nilai shipping
+    document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2); // Kemas kini shipping fee
+    const total = itemPrice + shipping / 100; // Kira jumlah keseluruhan
+    document.getElementById("totalAmount").textContent = total.toFixed(2); // Kemas kini jumlah total
+  });
+
+  // Fungsi pembayaran apabila kaedah dipilih
+  async function pay(method) {
+    // Ambil data penghantaran
+    const shipping = parseFloat(document.getElementById("deliveryOption").value);
+    const totalAmount = itemAmountInSen + shipping; // Jumlah dalam sen
+
+    const body = {
+      method: method,
+      amount: totalAmount, // Jumlah pembayaran termasuk shipping
+      product: "PLAIN SQUARE - BREEZY BEACH PLUM", // Nama produk
+      customer: {
+        name: document.getElementById("fullName").value,
+        address: document.getElementById("address").value,
+        postcode: document.getElementById("postcode").value,
+        city: document.getElementById("city").value,
       }
+    };
 
-      // Simpan maklumat penghantaran (anda boleh hantar maklumat ini ke server)
-      console.log({ name, phone, address, amount });
+    // Panggil API untuk mencipta sesi pembayaran
+    const res = await fetch("/api/checkout-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
 
-      // Tunjukkan pilihan pembayaran
-      document.getElementById("shippingForm").style.display = "none";
-      document.getElementById("paymentOptions").style.display = "block";
-
-      // Paparkan jumlah bayaran
-      document.getElementById("totalDisplay").textContent = (amount / 100).toFixed(2);
+    const data = await res.json();
+    if (data?.url) {
+      window.location.href = data.url; // Redirect ke halaman pembayaran Stripe
+    } else {
+      alert("Error creating payment session.");
     }
-
-    // Fungsi untuk memulakan pembayaran
-    async function pay(method) {
-      const amount = document.getElementById("amount").value;
-      if (!amount || isNaN(amount)) {
-        alert("Jumlah tidak sah.");
-        return;
-      }
-
-      const response = await fetch("/api/checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          method: method,
-          amount: parseInt(amount), // Pastikan jumlah dalam sen
-          product: "Order from Squarespace",
-          name: document.getElementById("name").value,
-          phone: document.getElementById("phone").value,
-          address: document.getElementById("address").value
-        }),
-      });
-
-      try {
-        const data = await response.json();
-        if (data?.url) {
-          window.location.href = data.url;
-        } else {
-          alert("Gagal cipta sesi pembayaran.");
-        }
-      } catch (e) {
-        alert("Server error. Sila semak kembali API.");
-      }
-    }
-
-    // Auto-update total display on page load
-    const amt = new URLSearchParams(window.location.search).get("amount");
-    if (amt) {
-      document.getElementById("totalDisplay").textContent = (amt / 100).toFixed(2);
-      document.getElementById("amount").value = amt; // Setkan amount dari query parameter
-    }
-  </script>
-</body>
-</html>
+  }
+</script>
