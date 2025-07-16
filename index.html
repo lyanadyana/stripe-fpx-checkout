@@ -1,38 +1,35 @@
-<!DOCTYPE html>
-<html lang="="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Custom Checkout</title>
-</head>
-<body>
-  <h2>Pilih Kaedah Pembayaran</h2>
-  <button onclick="pay('fpx')">Bayar dengan FPX</button>
-  <button onclick="pay('link')">Bayar dengan DuitNow Link</button>
-  <button onclick="pay('grabpay')">Bayar dengan GrabPay</button>
-  <button onclick="pay('alipay')">Bayar dengan Alipay</button>
-  <button onclick="pay('card')">Bayar dengan Kad Kredit/Debit</button>
+<script>
+  // Baca jumlah dari URL parameter (?amount=2990)
+  const urlParams = new URLSearchParams(window.location.search);
+  const amountFromCart = parseInt(urlParams.get("amount") || "0");
 
-  <script>
-    async function pay(method) {
-      const body = {
-        method: method,
-        amount: 2990,
-        product: "Contoh Produk"
-      };
+  const itemAmountInSen = amountFromCart || 2990; // fallback jika tiada
+  const itemPrice = (itemAmountInSen / 100).toFixed(2);
 
-      const res = await fetch("/api/checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-      });
+  // Papar jumlah pada page
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("itemAmount").textContent = itemPrice;
+    document.getElementById("totalAmount").textContent = itemPrice;
+  });
 
-      const data = await res.json();
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        alert("Ralat semasa cipta sesi pembayaran.");
-      }
+  async function pay(method) {
+    const body = {
+      method: method,
+      amount: itemAmountInSen,
+      product: "Order from Squarespace Cart"
+    };
+
+    const res = await fetch("/api/checkout-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    if (data?.url) {
+      window.location.href = data.url;
+    } else {
+      alert("Error creating payment session.");
     }
-  </script>
-</body>
-</html>
+  }
+</script>
