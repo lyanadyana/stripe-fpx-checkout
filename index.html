@@ -5,13 +5,17 @@
   <input id="address" placeholder="Shipping Address" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   
   <!-- Input untuk Negara -->
-  <input id="country" placeholder="Country (e.g., Malaysia)" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <select id="country" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+    <option value="">Select Country</option>
+    <option value="malaysia">Malaysia</option>
+    <option value="other">Other</option>
+  </select>
   
   <!-- Input untuk Postcode -->
   <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   
-  <!-- Dropdown untuk State (Negeri) -->
-  <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <!-- Dropdown untuk State (Negeri) - Default tidak muncul -->
+  <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
     <option value="">Select State</option>
     <!-- Semenanjung Malaysia -->
     <option value="selangor">Selangor</option>
@@ -33,6 +37,9 @@
     <option value="sarawak">Sarawak</option>
     <option value="labuan">Labuan</option>
   </select>
+  
+  <!-- Input untuk State (manual, jika bukan Malaysia) -->
+  <input id="stateManual" placeholder="State (if not Malaysia)" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
 
   <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
 
@@ -75,7 +82,6 @@
 
   // Daftar negeri dan harga penghantaran berdasarkan negeri
   const shippingRates = {
-    // Semenanjung Malaysia
     "selangor": 1000, // RM10 untuk Selangor
     "johor": 1000, // RM10 untuk Johor
     "kedah": 1000, // RM10 untuk Kedah
@@ -123,10 +129,25 @@
     }
   }
 
-  // Kemaskini penghantaran apabila negeri dipilih
-  document.getElementById("state").addEventListener("input", function () {
+  // Kemaskini penghantaran apabila negeri dipilih atau ditulis
+  document.getElementById("country").addEventListener("change", function () {
+    const country = document.getElementById("country").value;
+    
+    // Jika Malaysia dipilih, tunjukkan dropdown state
+    if (country === "malaysia") {
+      document.getElementById("state").style.display = "block";
+      document.getElementById("stateManual").style.display = "none";
+    } else {
+      // Jika bukan Malaysia, tunjukkan input manual untuk state
+      document.getElementById("state").style.display = "none";
+      document.getElementById("stateManual").style.display = "block";
+    }
+  });
+
+  // Kemaskini penghantaran apabila negeri dimasukkan
+  document.getElementById("state").addEventListener("change", function () {
     const stateInput = document.getElementById("state").value.trim(); // Ambil nilai negeri
-    updateShippingFeeAndTotal(stateInput);  // Kemas kini penghantaran berdasarkan negeri yang dimasukkan
+    updateShippingFeeAndTotal(stateInput);  // Kemas kini penghantaran berdasarkan negeri yang dipilih
   });
 
   // Fungsi pembayaran apabila kaedah dipilih
@@ -144,7 +165,7 @@
         phone: document.getElementById("phone").value, // Ambil nombor telefon
         address: document.getElementById("address").value,
         postcode: document.getElementById("postcode").value,
-        state: document.getElementById("state").value,  // Ambil nilai state
+        state: document.getElementById("state").value || document.getElementById("stateManual").value,  // Ambil nilai state
         city: document.getElementById("city").value,
       }
     };
