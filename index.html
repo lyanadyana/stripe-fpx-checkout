@@ -1,72 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Custom Checkout</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 2rem;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .pay-btn {
-      padding: 10px 16px;
-      border: 1px solid #ccc;
-      background: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: box-shadow 0.3s;
-    }
-
-    .pay-btn:hover {
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .pay-btn img {
-      height: 24px;
-      display: block;
-      margin: auto;
-    }
-
-    .payment-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    h2 {
-      margin-bottom: 0.5rem;
-    }
-
-    .total {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-  </style>
 </head>
-<body>
+<body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto;">
   <h2>Checkout</h2>
-  <p class="total">Total: RM <span id="totalDisplay">-</span></p>
-
-  <div class="payment-options">
-    <button onclick="pay('fpx')" class="pay-btn" aria-label="FPX">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/FPX_Logo.svg/120px-FPX_Logo.svg.png" alt="FPX">
-    </button>
-    <button onclick="pay('link')" class="pay-btn" aria-label="DuitNow Link">
-      <img src="https://seeklogo.com/images/D/duitnow-logo-82F3E8F622-seeklogo.com.png" alt="DuitNow Link">
-    </button>
-    <button onclick="pay('grabpay')" class="pay-btn" aria-label="GrabPay">
-      <img src="https://seeklogo.com/images/G/grab-logo-CECDDC188B-seeklogo.com.png" alt="GrabPay">
-    </button>
-    <button onclick="pay('alipay')" class="pay-btn" aria-label="Alipay">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Alipay_logo.svg/120px-Alipay_logo.svg.png" alt="Alipay">
-    </button>
-    <button onclick="pay('card')" class="pay-btn" aria-label="Kad">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Visa.svg/80px-Visa.svg.png" alt="Kad Debit/Kredit">
-    </button>
+  <p><strong>Total: RM <span id="totalDisplay">-</span></strong></p>
+  <div style="margin-top: 20px;">
+    <button onclick="pay('fpx')">Bayar dengan FPX</button>
   </div>
 
   <script>
@@ -78,6 +20,8 @@
         alert("Invalid amount. Sila pastikan ?amount= diset dalam URL.");
         return;
       }
+
+      document.getElementById("totalDisplay").textContent = (amount / 100).toFixed(2);
 
       const response = await fetch("/api/checkout-session", {
         method: "POST",
@@ -101,7 +45,7 @@
       }
     }
 
-    // Auto update total on load
+    // Auto-update total display on page load
     const amt = new URLSearchParams(window.location.search).get("amount");
     if (amt) {
       document.getElementById("totalDisplay").textContent = (amt / 100).toFixed(2);
