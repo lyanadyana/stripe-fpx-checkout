@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   const { amount, method, product, customer } = req.body;
 
-  if (!amount || !method || !customer || !customer.name || !customer.phone || !customer.address) {
+  if (!amount || !method || !customer || !customer.name || !customer.phone || !customer.address || !customer.postcode) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment', // Mod pembayaran
-      success_url: `https://www.lyanadyana.com/success?name=${customer.name}&phone=${customer.phone}&address=${customer.address}`, // URL kejayaan dengan parameter
+      success_url: `https://www.lyanadyana.com/success?name=${customer.name}&phone=${customer.phone}&address=${customer.address}&postcode=${customer.postcode}`, // URL kejayaan dengan parameter
       cancel_url: 'https://www.lyanadyana.com/cancel', // URL pembatalan
     });
 
