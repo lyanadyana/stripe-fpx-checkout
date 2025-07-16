@@ -94,6 +94,13 @@
         alert("Server error. Sila semak kembali API.");
       }
     }
+
+    // Auto-update total display on page load
+    const amt = new URLSearchParams(window.location.search).get("amount");
+    if (amt) {
+      document.getElementById("totalDisplay").textContent = (amt / 100).toFixed(2);
+      document.getElementById("amount").value = amt;
+    }
   </script>
 </body>
 </html>
