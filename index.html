@@ -1,35 +1,96 @@
-<script>
-  // Baca jumlah dari URL parameter (?amount=2990)
-  const urlParams = new URLSearchParams(window.location.search);
-  const amountFromCart = parseInt(urlParams.get("amount") || "0");
-
-  const itemAmountInSen = amountFromCart || 2990; // fallback jika tiada
-  const itemPrice = (itemAmountInSen / 100).toFixed(2);
-
-  // Papar jumlah pada page
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("itemAmount").textContent = itemPrice;
-    document.getElementById("totalAmount").textContent = itemPrice;
-  });
-
-  async function pay(method) {
-    const body = {
-      method: method,
-      amount: itemAmountInSen,
-      product: "Order from Squarespace Cart"
-    };
-
-    const res = await fetch("/api/checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-
-    const data = await res.json();
-    if (data?.url) {
-      window.location.href = data.url;
-    } else {
-      alert("Error creating payment session.");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom Checkout</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 24px;
+      border: 1px solid #eee;
+      border-radius: 12px;
     }
-  }
-</script>
+    .pay-btn {
+      padding: 10px 16px;
+      border: 1px solid #ccc;
+      background: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+    }
+    .pay-btn:hover {
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+    }
+    .pay-btn img {
+      display: block;
+      margin: auto;
+      height: 28px;
+    }
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Order Summary</h2>
+  <p>Total Amount: <strong>RM <span id="totalAmount">0.00</span></strong></p>
+
+  <h3 style="margin-top: 24px;">Choose Payment Method</h3>
+  <div class="buttons">
+    <button onclick="pay('fpx')" class="pay-btn" aria-label="FPX">
+      <img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687676bd4a954276e81fb144/1752594109396/FPX-Logo.png" alt="FPX">
+    </button>
+    <button onclick="pay('link')" class="pay-btn" aria-label="DuitNow Link">
+      <img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/6876772becbe083116a301e0/1752594219606/duitnow-logo-png_seeklogo-557261.png" alt="DuitNow">
+    </button>
+    <button onclick="pay('grabpay')" class="pay-btn" aria-label="GrabPay">
+      <img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/68767787089e8e235490babc/1752594311288/GrabPay_Final_Logo_RGB_green_StackedVersion-01.png" alt="GrabPay">
+    </button>
+    <button onclick="pay('alipay')" class="pay-btn" aria-label="Alipay">
+      <img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677c00057f916c516c4ca/1752594368748/62b1e77b56b6848f8bec9031.png" alt="Alipay">
+    </button>
+    <button onclick="pay('card')" class="pay-btn" aria-label="Card">
+      <img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677f99df7ce1477a1b709/1752594425883/credit-or-debit-card-visa-mastercard-logo-hd-transparent-png--comdlpng6953127.jpg" alt="Card">
+    </button>
+  </div>
+
+  <script>
+    // Ambil amount dari URL
+    const query = new URLSearchParams(window.location.search);
+    const amountInSen = parseInt(query.get("amount")) || 0;
+    const amountInRM = (amountInSen / 100).toFixed(2);
+    document.getElementById("totalAmount").textContent = amountInRM;
+
+    async function pay(method) {
+      if (!amountInSen || amountInSen <= 0) {
+        alert("Invalid amount. Sila pastikan ?amount= diset dalam URL.");
+        return;
+      }
+
+      const res = await fetch("/api/checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          method: method,
+          amount: amountInSen,
+          product: "Custom Order from Squarespace"
+        })
+      });
+
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Error creating payment session.");
+      }
+    }
+  </script>
+
+</body>
+</html>
