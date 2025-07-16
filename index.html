@@ -26,7 +26,7 @@
 
     <div>
       <label for="amount">Jumlah Bayaran (RM):</label>
-      <input type="number" id="amount" name="amount" required>
+      <input type="number" id="amount" name="amount" required disabled> <!-- Disabled untuk pengguna -->
     </div>
 
     <button type="submit">Next</button>
@@ -62,7 +62,7 @@
       document.getElementById("paymentOptions").style.display = "block";
 
       // Paparkan jumlah bayaran
-      document.getElementById("totalDisplay").textContent = (amount).toFixed(2);
+      document.getElementById("totalDisplay").textContent = (amount / 100).toFixed(2);
     }
 
     // Fungsi untuk memulakan pembayaran
@@ -78,8 +78,11 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           method: method,
-          amount: parseInt(amount) * 100, // Pastikan jumlah dalam sen
+          amount: parseInt(amount), // Pastikan jumlah dalam sen
           product: "Order from Squarespace",
+          name: document.getElementById("name").value,
+          phone: document.getElementById("phone").value,
+          address: document.getElementById("address").value
         }),
       });
 
@@ -99,7 +102,7 @@
     const amt = new URLSearchParams(window.location.search).get("amount");
     if (amt) {
       document.getElementById("totalDisplay").textContent = (amt / 100).toFixed(2);
-      document.getElementById("amount").value = amt;
+      document.getElementById("amount").value = amt; // Setkan amount dari query parameter
     }
   </script>
 </body>
