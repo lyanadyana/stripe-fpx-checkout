@@ -1,88 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Custom Checkout</title>
-  <style>
-    .pay-btn {
-      padding: 10px 16px;
-      border: 1px solid #ccc;
-      background: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: box-shadow 0.3s;
-    }
-    .pay-btn:hover {
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
-    }
-    .pay-btn img {
-      display: block;
-      margin: auto;
-    }
-  </style>
 </head>
-<body style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 24px;">
-
-  <h2>Order Summary</h2>
-  <p>Item: <strong>Checkout from Squarespace</strong></p>
-  <p>Total: <strong>RM <span id="totalAmount">0.00</span></strong></p>
-
-  <h3 style="margin-top: 24px;">Choose Payment Method</h3>
-  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;">
-    <button class="pay-btn" id="fpx"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687676bd4a954276e81fb144/1752594109396/FPX-Logo.png" height="24" alt="FPX"></button>
-    <button class="pay-btn" id="link"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/6876772becbe083116a301e0/1752594219606/duitnow-logo-png_seeklogo-557261.png" height="24" alt="DuitNow"></button>
-    <button class="pay-btn" id="grabpay"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/68767787089e8e235490babc/1752594311288/GrabPay_Final_Logo_RGB_green_StackedVersion-01.png" height="24" alt="GrabPay"></button>
-    <button class="pay-btn" id="alipay"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677c00057f916c516c4ca/1752594368748/62b1e77b56b6848f8bec9031.png" height="24" alt="Alipay"></button>
-    <button class="pay-btn" id="card"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677f99df7ce1477a1b709/1752594425883/credit-or-debit-card-visa-mastercard-logo-hd-transparent-png--comdlpng6953127.jpg" height="24" alt="Card"></button>
+<body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto;">
+  <h2>Checkout</h2>
+  <p><strong>Total: RM <span id="totalDisplay">-</span></strong></p>
+  <div style="margin-top: 20px;">
+    <button onclick="pay('fpx')">Bayar dengan FPX</button>
   </div>
 
   <script>
-    window.onload = () => {
+    async function pay(method) {
       const urlParams = new URLSearchParams(window.location.search);
-      const amount = parseInt(urlParams.get("amount"));
+      const amount = urlParams.get("amount");
 
       if (!amount || isNaN(amount)) {
         alert("Invalid amount. Sila pastikan ?amount= diset dalam URL.");
         return;
       }
 
-      document.getElementById("totalAmount").textContent = (amount / 100).toFixed(2);
+      document.getElementById("totalDisplay").textContent = (amount / 100).toFixed(2);
 
-      async function pay(method) {
-        const body = {
+      const response = await fetch("/api/checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           method: method,
-          amount: amount,
-          product: "Checkout from Squarespace",
-          customer: {
-            name: "Customer", // optional for now
-            address: "-",
-            postcode: "-",
-            city: "-"
-          }
-        };
+          amount: parseInt(amount),
+          product: "Order from Squarespace"
+        })
+      });
 
-        const res = await fetch("/api/checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
-
-        const data = await res.json();
+      try {
+        const data = await response.json();
         if (data?.url) {
           window.location.href = data.url;
         } else {
-          alert("Error creating payment session.");
+          alert("Gagal cipta sesi pembayaran.");
         }
+      } catch (e) {
+        alert("Server error. Sila semak kembali API.");
       }
+    }
 
-      document.getElementById("fpx").addEventListener("click", () => pay("fpx"));
-      document.getElementById("link").addEventListener("click", () => pay("link"));
-      document.getElementById("grabpay").addEventListener("click", () => pay("grabpay"));
-      document.getElementById("alipay").addEventListener("click", () => pay("alipay"));
-      document.getElementById("card").addEventListener("click", () => pay("card"));
-    };
+    // Auto-update total display on page load
+    const amt = new URLSearchParams(window.location.search).get("amount");
+    if (amt) {
+      document.getElementById("totalDisplay").textContent = (amt / 100).toFixed(2);
+    }
   </script>
-
 </body>
 </html>
