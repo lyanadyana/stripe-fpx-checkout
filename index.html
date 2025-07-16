@@ -4,11 +4,18 @@
   <input id="phone" placeholder="Phone Number" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   <input id="address" placeholder="Shipping Address" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   
+  <!-- Input untuk Negara -->
+  <select id="country" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+    <option value="">Select Country</option>
+    <option value="malaysia">Malaysia</option>
+    <option value="other">Other</option>
+  </select>
+  
   <!-- Input untuk Postcode -->
   <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   
-  <!-- Dropdown untuk State (Negeri) -->
-  <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <!-- Dropdown untuk State (Negeri) - Default tidak muncul -->
+  <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
     <option value="">Select State</option>
     <!-- Semenanjung Malaysia -->
     <option value="selangor">Selangor</option>
@@ -29,11 +36,8 @@
     <option value="sabah">Sabah</option>
     <option value="sarawak">Sarawak</option>
     <option value="labuan">Labuan</option>
-
-    <!-- Pilihan "Other" untuk negeri yang tidak terdapat dalam senarai -->
-    <option value="other">Other</option>
   </select>
-
+  
   <!-- Input untuk State (manual, jika bukan Malaysia) -->
   <input id="stateManual" placeholder="State (if not Malaysia)" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
 
@@ -52,14 +56,6 @@
     <button onclick="pay('alipay')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677c00057f916c516c4ca/1752594368748/62b1e77b56b6848f8bec9031.png" height="24" alt="Alipay"></button>
     <button onclick="pay('card')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677f99df7ce1477a1b709/1752594425883/credit-or-debit-card-visa-mastercard-logo-hd-transparent-png--comdlpng6953127.jpg" height="24" alt="Card"></button>
   </div>
-
-  <!-- Form Negara di bawah -->
-  <h3>Country</h3>
-  <select id="country" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-    <option value="">Select Country</option>
-    <option value="malaysia">Malaysia</option>
-    <option value="other">Other</option>
-  </select>
 </div>
 
 <style>
@@ -134,12 +130,6 @@
   }
 
   // Kemaskini penghantaran apabila negeri dipilih atau ditulis
-  document.getElementById("state").addEventListener("change", function () {
-    const stateInput = document.getElementById("state").value.trim(); // Ambil nilai negeri
-    updateShippingFeeAndTotal(stateInput);  // Kemas kini penghantaran berdasarkan negeri yang dipilih
-  });
-
-  // Kemaskini penghantaran apabila negara dipilih
   document.getElementById("country").addEventListener("change", function () {
     const country = document.getElementById("country").value;
     
@@ -152,6 +142,12 @@
       document.getElementById("state").style.display = "none";
       document.getElementById("stateManual").style.display = "block";
     }
+  });
+
+  // Kemaskini penghantaran apabila negeri dimasukkan
+  document.getElementById("state").addEventListener("change", function () {
+    const stateInput = document.getElementById("state").value.trim(); // Ambil nilai negeri
+    updateShippingFeeAndTotal(stateInput);  // Kemas kini penghantaran berdasarkan negeri yang dipilih
   });
 
   // Fungsi pembayaran apabila kaedah dipilih
