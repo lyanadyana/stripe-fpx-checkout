@@ -138,9 +138,9 @@
 
   <script>
     // Example cart data for demonstration
-    const cartItems = [
+    let cartItems = [
       { name: "PLAIN SQUARE - BREEZY BEACH PLUM", price: 29.90, quantity: 1 },
-      // Add more items as necessary
+      // You can dynamically add more items to this array
     ];
 
     const shippingRates = {
@@ -148,9 +148,11 @@
       "express": 20
     };
 
-    // Function to generate order summary
+    // Function to generate order summary dynamically
     function generateOrderSummary() {
       const orderSummaryDiv = document.getElementById('orderSummary');
+      orderSummaryDiv.innerHTML = ""; // Clear previous summary
+
       let totalPrice = 0;
 
       // Loop through cart items and generate order summary
@@ -200,6 +202,17 @@
       alert(`You selected: ${method} payment`);
       // Implement payment logic here
     }
+
+    // Dynamically add new items to the cart
+    function addItemToCart(name, price, quantity) {
+      cartItems.push({ name, price, quantity });
+      generateOrderSummary();
+    }
+
+    // Example of adding a new item to cart
+    setTimeout(() => {
+      addItemToCart("NEW ITEM - SAMPLE PRODUCT", 49.90, 2); // Adding a new item after 3 seconds
+    }, 3000);
   </script>
 
 </body>
