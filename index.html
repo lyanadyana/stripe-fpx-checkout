@@ -40,53 +40,45 @@
 </style>
 
 <script>
-  const itemPrice = 29.90;  // Harga item
+  const itemPrice = 29.90;  // Harga item dalam MYR
   const itemAmountInSen = 2990; // Harga item dalam sen (RM29.90 = 2990 sen)
 
-  // Senarai Postcode Malaysia
-  const westMalaysiaPostcodes = [
-    // Senarai postcode untuk Semenanjung Malaysia (West Malaysia)
-    "10000", "10100", "10200", "10300", "10400", "10500", "10600", "10700", "10800", "10900", "11000", "20000", "20100", "20200", "20300", "20400", "20500", "20600", 
-    "30000", "30100", "30200", "30300", "30400", "40000", "40100", "40200", "40300", "40400", "40500", "40600", 
-    "50000", "50100", "50200", "50300", "50400", "50500", "60000", "60100", "60200", "60300", "60400", "60500", 
-    "70000", "70100", "70200", "70300", "70400", "70500", "80000", "80100", "80200", "80300", "80400", "80500", 
-    "90000", "90100", "90200", "90300", "90400", "90500"
-  ];
+  // Fungsi untuk memeriksa postcode dan mendapatkan harga penghantaran
+  async function checkPostcode(postcode) {
+    try {
+      // Panggil API untuk memeriksa postcode (contoh API, ganti dengan API sebenar)
+      const response = await fetch(`https://api.example.com/postcode/${postcode}`);
+      const data = await response.json();
 
-  const eastMalaysiaPostcodes = [
-    // Senarai postcode untuk Sabah & Sarawak (East Malaysia)
-    "88000", "88100", "88200", "88300", "88400", "88500", "88600", "88700", "88800", "88900", "89000", "89100", 
-    "89200", "89300", "89400", "89500", "89600", "89700", "89800", "89900", "90000", "90100", "90200", "90300", 
-    "90400", "90500", "90600", "90700", "90800", "90900", "91000", "91100", "91200", "91300", "91400", "91500", 
-    "93000", "93100", "93200", "93300", "93400", "93500", "93600", "93700", "93800", "93900"
-  ];
+      if (data.status === 'success') {
+        const region = data.region; // Mendapatkan region (Semenanjung Malaysia atau Sabah/Sarawak)
 
-  // Kemaskini shipping fee dan total amount apabila pengguna memilih penghantaran
-  document.getElementById("postcode").addEventListener("input", function () {
-    const postcode = document.getElementById("postcode").value.trim(); // Pastikan tiada ruang kosong
+        // Tentukan harga penghantaran berdasarkan region
+        let shippingFee = 0;
+        if (region === 'West Malaysia') {
+          shippingFee = 1000;  // RM10 untuk Semenanjung Malaysia
+        } else if (region === 'East Malaysia') {
+          shippingFee = 1900;  // RM19 untuk Sabah/Sarawak
+        }
 
-    console.log("Postcode entered:", postcode);  // Debug: pastikan postcode diset dengan betul
-
-    let shipping = 0;
-
-    // Semenanjung Malaysia (RM10 shipping)
-    if (westMalaysiaPostcodes.includes(postcode)) {
-      shipping = 1000; // RM10 = 1000 sen
-    } 
-    // Sabah & Sarawak (RM19 shipping)
-    else if (eastMalaysiaPostcodes.includes(postcode)) {
-      shipping = 1900; // RM19 = 1900 sen
+        // Kemas kini harga penghantaran di UI
+        document.getElementById("shippingFee").textContent = (shippingFee / 100).toFixed(2);
+        const total = itemPrice + shippingFee / 100;  // Kemas kini jumlah keseluruhan
+        document.getElementById("totalAmount").textContent = total.toFixed(2);
+      } else {
+        alert("Postcode tidak sah. Sila semak semula.");
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert("Terdapat ralat semasa menghubungi API postcode.");
     }
+  }
 
-    // Kemas kini shipping fee dan total amount
-    if (shipping > 0) {
-      document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2); // Kemaskini penghantaran
-      const total = itemPrice + shipping / 100; // Kira jumlah total
-      document.getElementById("totalAmount").textContent = total.toFixed(2); // Kemaskini total
-    } else {
-      // Jika tidak sah, set penghantaran kepada RM0
-      document.getElementById("shippingFee").textContent = "0.00";
-      document.getElementById("totalAmount").textContent = itemPrice.toFixed(2);
+  // Kemas kini harga penghantaran apabila postcode dimasukkan
+  document.getElementById("postcode").addEventListener("input", function () {
+    const postcode = document.getElementById("postcode").value.trim();
+    if (postcode.length >= 5) {  // Pastikan postcode lengkap
+      checkPostcode(postcode);  // Panggil API untuk memeriksa postcode
     }
   });
 
