@@ -13,26 +13,35 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: 'Missing payment method or amount' });
   }
 
+  // Senarai kaedah pembayaran yang disokong
+  const allowedMethods = ['card', 'fpx', 'grabpay', 'alipay'];
+
+  // Semak jika kaedah pembayaran yang diterima sah
+  if (!allowedMethods.includes(method)) {
+    return res.status(400).json({ message: 'Kaedah pembayaran tidak disokong' });
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: [method],
       line_items: [
         {
           price_data: {
-            currency: 'myr',
+            currency: 'myr', // Mata wang yang digunakan
             product_data: {
-              name: product || "Product",
+              name: product || "Product", // Nama produk, jika tiada gunakan "Product"
             },
-            unit_amount: amount,
+            unit_amount: amount, // Jumlah bayaran
           },
-          quantity: 1,
+          quantity: 1, // Kuantiti produk
         },
       ],
-      mode: 'payment',
-      success_url: 'https://www.lyanadyana.com/success',
-      cancel_url: 'https://www.lyanadyana.com/cancel',
+      mode: 'payment', // Mod pembayaran
+      success_url: 'https://www.lyanadyana.com/success', // URL kejayaan
+      cancel_url: 'https://www.lyanadyana.com/cancel', // URL pembatalan
     });
 
+    // Hantar URL sesi Stripe
     res.status(200).json({ url: session.url });
 
   } catch (error) {
