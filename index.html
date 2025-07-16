@@ -7,7 +7,10 @@
   <!-- Input untuk Postcode -->
   <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   
-  <!-- Dropdown untuk State (Negeri) -->
+  <!-- Input untuk City -->
+  <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+
+  <!-- Dropdown untuk State (Negeri) - Diletakkan selepas City -->
   <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px;">
     <option value="">Select State</option>
     <!-- Semenanjung Malaysia -->
@@ -37,7 +40,13 @@
   <!-- Input untuk State (manual, jika bukan Malaysia) -->
   <input id="stateManual" placeholder="State (if not Malaysia)" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
 
-  <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <!-- Form Negara di bawah state -->
+  <h3>Country</h3>
+  <select id="country" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+    <option value="">Select Country</option>
+    <option value="malaysia">Malaysia</option>
+    <option value="other">Other</option>
+  </select>
 
   <h3>Order Summary</h3>
   <p>Item: <strong>PLAIN SQUARE - BREEZY BEACH PLUM</strong></p>
@@ -52,14 +61,6 @@
     <button onclick="pay('alipay')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677c00057f916c516c4ca/1752594368748/62b1e77b56b6848f8bec9031.png" height="24" alt="Alipay"></button>
     <button onclick="pay('card')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677f99df7ce1477a1b709/1752594425883/credit-or-debit-card-visa-mastercard-logo-hd-transparent-png--comdlpng6953127.jpg" height="24" alt="Card"></button>
   </div>
-
-  <!-- Form Negara di bawah -->
-  <h3>Country</h3>
-  <select id="country" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-    <option value="">Select Country</option>
-    <option value="malaysia">Malaysia</option>
-    <option value="other">Other</option>
-  </select>
 </div>
 
 <style>
