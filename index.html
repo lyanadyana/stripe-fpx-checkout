@@ -10,8 +10,29 @@
   <!-- Input untuk Postcode -->
   <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   
-  <!-- Input untuk State (User Typing) -->
-  <input id="state" placeholder="State (e.g., Johor, Sabah, Selangor)" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+  <!-- Dropdown untuk State (Negeri) -->
+  <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+    <option value="">Select State</option>
+    <!-- Semenanjung Malaysia -->
+    <option value="selangor">Selangor</option>
+    <option value="johor">Johor</option>
+    <option value="kedah">Kedah</option>
+    <option value="kelantan">Kelantan</option>
+    <option value="melaka">Melaka</option>
+    <option value="negeri sembilan">Negeri Sembilan</option>
+    <option value="pahang">Pahang</option>
+    <option value="perak">Perak</option>
+    <option value="perlis">Perlis</option>
+    <option value="pulau pinang">Pulau Pinang</option>
+    <option value="terengganu">Terengganu</option>
+    <option value="kuala lumpur">Kuala Lumpur</option>
+    <option value="putrajaya">Putrajaya</option>
+
+    <!-- Sabah & Sarawak -->
+    <option value="sabah">Sabah</option>
+    <option value="sarawak">Sarawak</option>
+    <option value="labuan">Labuan</option>
+  </select>
 
   <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
 
@@ -54,18 +75,22 @@
 
   // Daftar negeri dan harga penghantaran berdasarkan negeri
   const shippingRates = {
-    "semenanjung": 1000, // RM10 untuk Semenanjung Malaysia (1000 sen)
+    // Semenanjung Malaysia
     "selangor": 1000, // RM10 untuk Selangor
-    "kl": 1000, // RM10 untuk Kuala Lumpur
-    "penang": 1000, // RM10 untuk Penang
+    "johor": 1000, // RM10 untuk Johor
+    "kedah": 1000, // RM10 untuk Kedah
+    "kelantan": 1000, // RM10 untuk Kelantan
     "melaka": 1000, // RM10 untuk Melaka
-    "pahang": 1000, // RM10 untuk Pahang
     "negeri sembilan": 1000, // RM10 untuk Negeri Sembilan
-    "terengganu": 1000, // RM10 untuk Terengganu
+    "pahang": 1000, // RM10 untuk Pahang
     "perak": 1000, // RM10 untuk Perak
     "perlis": 1000, // RM10 untuk Perlis
     "pulau pinang": 1000, // RM10 untuk Pulau Pinang
-    "sabah_sarawak": 1900, // RM19 untuk Sabah & Sarawak (1900 sen)
+    "terengganu": 1000, // RM10 untuk Terengganu
+    "kuala lumpur": 1000, // RM10 untuk Kuala Lumpur
+    "putrajaya": 1000, // RM10 untuk Putrajaya
+
+    // Sabah & Sarawak
     "sabah": 1900, // RM19 untuk Sabah
     "sarawak": 1900, // RM19 untuk Sarawak
     "labuan": 1900  // RM19 untuk Labuan
@@ -75,10 +100,10 @@
   function updateShippingFeeAndTotal(state) {
     let shipping = 0;
 
-    // Semak berdasarkan state (negeri)
+    // Semak berdasarkan negeri
     state = state.toLowerCase(); // Pastikan tiada masalah case-sensitive
 
-    // Tentukan harga penghantaran berdasarkan state
+    // Tentukan harga penghantaran berdasarkan negeri
     if (shippingRates[state]) {
       shipping = shippingRates[state]; // Dapatkan harga penghantaran dari `shippingRates`
     } else {
@@ -98,9 +123,9 @@
     }
   }
 
-  // Kemaskini penghantaran apabila negeri dimasukkan
+  // Kemaskini penghantaran apabila negeri dipilih
   document.getElementById("state").addEventListener("input", function () {
-    const stateInput = document.getElementById("state").value.trim(); // Ambil nilai state
+    const stateInput = document.getElementById("state").value.trim(); // Ambil nilai negeri
     updateShippingFeeAndTotal(stateInput);  // Kemas kini penghantaran berdasarkan negeri yang dimasukkan
   });
 
