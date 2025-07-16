@@ -45,9 +45,10 @@
 
   // Kemaskini shipping fee dan total amount apabila pengguna memilih penghantaran
   document.getElementById("postcode").addEventListener("input", function () {
-    const postcode = document.getElementById("postcode").value.trim();
+    const postcode = document.getElementById("postcode").value.trim(); // Pastikan tiada ruang kosong
 
-    // Tentukan kadar penghantaran berdasarkan postcode
+    console.log("Postcode entered:", postcode);  // Debug: pastikan postcode diset dengan betul
+
     let shipping = 0;
 
     // Semenanjung Malaysia (Postcode bermula dengan 1-9)
