@@ -1,202 +1,206 @@
-<div style="max-width: 600px; margin: auto; font-family: sans-serif; padding: 24px; border: 1px solid #eee; border-radius: 12px;">
-  <h2>Shipping Information</h2>
-  <input id="fullName" placeholder="Full Name" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-  <input id="phone" placeholder="Phone Number" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-  <input id="address" placeholder="Shipping Address" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-  
-  <!-- Input untuk Negara -->
-  <select id="country" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-    <option value="">Select Country</option>
-    <option value="malaysia">Malaysia</option>
-    <option value="other">Other</option>
-  </select>
-  
-  <!-- Input untuk Postcode -->
-  <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-  
-  <!-- Dropdown untuk State (Negeri) - Default tidak muncul -->
-  <select id="state" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
-    <option value="">Select State</option>
-    <!-- Semenanjung Malaysia -->
-    <option value="selangor">Selangor</option>
-    <option value="johor">Johor</option>
-    <option value="kedah">Kedah</option>
-    <option value="kelantan">Kelantan</option>
-    <option value="melaka">Melaka</option>
-    <option value="negeri sembilan">Negeri Sembilan</option>
-    <option value="pahang">Pahang</option>
-    <option value="perak">Perak</option>
-    <option value="perlis">Perlis</option>
-    <option value="pulau pinang">Pulau Pinang</option>
-    <option value="terengganu">Terengganu</option>
-    <option value="kuala lumpur">Kuala Lumpur</option>
-    <option value="putrajaya">Putrajaya</option>
-
-    <!-- Sabah & Sarawak -->
-    <option value="sabah">Sabah</option>
-    <option value="sarawak">Sarawak</option>
-    <option value="labuan">Labuan</option>
-  </select>
-  
-  <!-- Input untuk State (manual, jika bukan Malaysia) -->
-  <input id="stateManual" placeholder="State (if not Malaysia)" style="width: 100%; margin-bottom: 12px; padding: 8px; display: none;">
-
-  <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
-
-  <h3>Order Summary</h3>
-  <p>Item: <strong>PLAIN SQUARE - BREEZY BEACH PLUM</strong></p>
-  <p>Item Price: <strong>RM <span id="itemAmount">29.90</span></strong></p>
-  <p>Shipping: <strong>RM <span id="shippingFee">0.00</span></strong></p>
-  <p>Total: <strong>RM <span id="totalAmount">29.90</span></strong></p>
-
-  <h3 style="margin-top: 24px;">Choose Payment Method</h3>
-  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;">
-    <button onclick="pay('fpx')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687676bd4a954276e81fb144/1752594109396/FPX-Logo.png" height="24" alt="FPX"></button>
-    <button onclick="pay('grabpay')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/68767787089e8e235490babc/1752594311288/GrabPay_Final_Logo_RGB_green_StackedVersion-01.png" height="24" alt="GrabPay"></button>
-    <button onclick="pay('alipay')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677c00057f916c516c4ca/1752594368748/62b1e77b56b6848f8bec9031.png" height="24" alt="Alipay"></button>
-    <button onclick="pay('card')" class="pay-btn"><img src="https://static1.squarespace.com/static/6832bef596c05e4a77e1dd4f/t/687677f99df7ce1477a1b709/1752594425883/credit-or-debit-card-visa-mastercard-logo-hd-transparent-png--comdlpng6953127.jpg" height="24" alt="Card"></button>
-  </div>
-</div>
-
-<style>
-  .pay-btn {
-    padding: 10px 16px;
-    border: 1px solid #ccc;
-    background: #fff;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: box-shadow 0.3s;
-  }
-  .pay-btn:hover {
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-  }
-  .pay-btn img {
-    display: block;
-    margin: auto;
-  }
-</style>
-
-<script>
-  const itemPrice = 29.90;  // Harga item dalam MYR
-  const itemAmountInSen = 2990; // Harga item dalam sen (RM29.90 = 2990 sen)
-
-  // Daftar negeri dan harga penghantaran berdasarkan negeri
-  const shippingRates = {
-    "selangor": 1000, // RM10 untuk Selangor
-    "johor": 1000, // RM10 untuk Johor
-    "kedah": 1000, // RM10 untuk Kedah
-    "kelantan": 1000, // RM10 untuk Kelantan
-    "melaka": 1000, // RM10 untuk Melaka
-    "negeri sembilan": 1000, // RM10 untuk Negeri Sembilan
-    "pahang": 1000, // RM10 untuk Pahang
-    "perak": 1000, // RM10 untuk Perak
-    "perlis": 1000, // RM10 untuk Perlis
-    "pulau pinang": 1000, // RM10 untuk Pulau Pinang
-    "terengganu": 1000, // RM10 untuk Terengganu
-    "kuala lumpur": 1000, // RM10 untuk Kuala Lumpur
-    "putrajaya": 1000, // RM10 untuk Putrajaya
-
-    // Sabah & Sarawak
-    "sabah": 1900, // RM19 untuk Sabah
-    "sarawak": 1900, // RM19 untuk Sarawak
-    "labuan": 1900  // RM19 untuk Labuan
-  };
-
-  // Fungsi untuk kemas kini harga penghantaran dan jumlah total
-  function updateShippingFeeAndTotal(state) {
-    let shipping = 0;
-
-    // Semak berdasarkan negeri
-    state = state.toLowerCase(); // Pastikan tiada masalah case-sensitive
-
-    // Tentukan harga penghantaran berdasarkan negeri
-    if (shippingRates[state]) {
-      shipping = shippingRates[state]; // Dapatkan harga penghantaran dari `shippingRates`
-    } else {
-      // Jika tidak sah, set penghantaran kepada RM0
-      shipping = 0;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
     }
 
-    // Kemas kini shipping fee dan total amount
-    if (shipping > 0) {
-      document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2); // Kemaskini penghantaran
-      const total = itemPrice + shipping / 100; // Kira jumlah total
-      document.getElementById("totalAmount").textContent = total.toFixed(2); // Kemaskini total
-    } else {
-      // Jika tidak sah, set penghantaran kepada RM0
-      document.getElementById("shippingFee").textContent = "0.00";
-      document.getElementById("totalAmount").textContent = itemPrice.toFixed(2);
+    .checkout-container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-  }
 
-  // Kemaskini penghantaran apabila negeri dipilih atau ditulis
-  document.getElementById("country").addEventListener("change", function () {
-    const country = document.getElementById("country").value;
-    
-    // Jika Malaysia dipilih, tunjukkan dropdown state
-    if (country === "malaysia") {
-      document.getElementById("state").style.display = "block";
-      document.getElementById("stateManual").style.display = "none";
-    } else {
-      // Jika bukan Malaysia, tunjukkan input manual untuk state
-      document.getElementById("state").style.display = "none";
-      document.getElementById("stateManual").style.display = "block";
+    .section-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 16px;
     }
-  });
 
-  // Kemaskini penghantaran apabila negeri dimasukkan
-  document.getElementById("state").addEventListener("change", function () {
-    const stateInput = document.getElementById("state").value.trim(); // Ambil nilai negeri
-    updateShippingFeeAndTotal(stateInput);  // Kemas kini penghantaran berdasarkan negeri yang dipilih
-  });
+    .input-group {
+      margin-bottom: 16px;
+    }
 
-  // Fungsi pembayaran apabila kaedah dipilih
-  async function pay(method) {
-    // Ambil data penghantaran
-    const shipping = parseFloat(document.getElementById("shippingFee").textContent) * 100; // Tukar kepada sen
-    const totalAmount = itemAmountInSen + shipping; // Jumlah dalam sen
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
 
-    const body = {
-      method: method,
-      amount: totalAmount, // Jumlah pembayaran termasuk shipping
-      product: "PLAIN SQUARE - BREEZY BEACH PLUM", // Nama produk
-      customer: {
-        name: document.getElementById("fullName").value,
-        phone: document.getElementById("phone").value, // Ambil nombor telefon
-        address: document.getElementById("address").value,
-        postcode: document.getElementById("postcode").value,
-        state: document.getElementById("state").value || document.getElementById("stateManual").value,  // Ambil nilai state
-        city: document.getElementById("city").value,
+    .button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      display: block;
+      width: 100%;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+    .summary-container {
+      background-color: #f1f1f1;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .summary-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .summary-total {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .checkout-container {
+        padding: 16px;
       }
+
+      .button {
+        font-size: 1.1em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="checkout-container">
+    <h1>Checkout</h1>
+
+    <!-- Customer Information Section -->
+    <div class="input-group">
+      <div class="section-title">Customer Information</div>
+      <input type="text" id="fullName" placeholder="Full Name">
+      <input type="text" id="phone" placeholder="Phone Number">
+      <input type="text" id="address" placeholder="Shipping Address">
+      <input type="text" id="postcode" placeholder="Postcode">
+      <input type="text" id="city" placeholder="City">
+    </div>
+
+    <!-- Shipping Options Section -->
+    <div class="input-group">
+      <div class="section-title">Select Shipping Option</div>
+      <select id="shippingOption">
+        <option value="standard">Standard Shipping (RM10)</option>
+        <option value="express">Express Shipping (RM20)</option>
+      </select>
+    </div>
+
+    <!-- Payment Method Section -->
+    <div class="input-group">
+      <div class="section-title">Select Payment Method</div>
+      <button class="button" onclick="pay('fpx')">Pay with FPX</button>
+      <button class="button" onclick="pay('card')">Pay with Credit/Debit Card</button>
+      <button class="button" onclick="pay('grabpay')">Pay with GrabPay</button>
+      <button class="button" onclick="pay('alipay')">Pay with Alipay</button>
+    </div>
+
+    <!-- Order Summary Section -->
+    <div class="summary-container">
+      <div class="summary-title">Order Summary</div>
+      <div id="orderSummary">
+        <!-- Dynamic Order Summary will be generated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Example cart data for demonstration
+    const cartItems = [
+      { name: "PLAIN SQUARE - BREEZY BEACH PLUM", price: 29.90, quantity: 1 },
+      // Add more items as necessary
+    ];
+
+    const shippingRates = {
+      "standard": 10,
+      "express": 20
     };
 
-    // Panggil API untuk mencipta sesi pembayaran
-    const res = await fetch("/api/checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+    // Function to generate order summary
+    function generateOrderSummary() {
+      const orderSummaryDiv = document.getElementById('orderSummary');
+      let totalPrice = 0;
 
-    const data = await res.json();
-    if (data?.url) {
-      window.location.href = data.url; // Redirect ke halaman pembayaran Stripe
-    } else {
-      alert("Error creating payment session.");
+      // Loop through cart items and generate order summary
+      cartItems.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        totalPrice += itemTotal;
+        const itemElement = `
+          <div class="summary-item">
+            <span>${item.name}</span>
+            <span>RM ${itemTotal.toFixed(2)}</span>
+          </div>
+        `;
+        orderSummaryDiv.innerHTML += itemElement;
+      });
+
+      // Calculate shipping fee based on selected shipping option
+      const shippingOption = document.getElementById('shippingOption').value;
+      const shippingFee = shippingRates[shippingOption];
+      totalPrice += shippingFee;
+
+      // Add shipping and total to summary
+      const shippingElement = `
+        <div class="summary-item">
+          <span>Shipping</span>
+          <span>RM ${shippingFee.toFixed(2)}</span>
+        </div>
+      `;
+      orderSummaryDiv.innerHTML += shippingElement;
+
+      const totalElement = `
+        <div class="summary-total">
+          <span>Total</span>
+          <span>RM ${totalPrice.toFixed(2)}</span>
+        </div>
+      `;
+      orderSummaryDiv.innerHTML += totalElement;
     }
-@media (max-width: 600px) {
-  .pay-btn {
-    width: 100%; /* Butang pembayaran akan mengisi lebar penuh di peranti mudah alih */
-  }
 
-  input, select {
-    padding: 10px; /* Sesuaikan padding */
-    font-size: 1em; /* Sesuaikan saiz font */
-  }
+    // Update order summary when shipping option changes
+    document.getElementById('shippingOption').addEventListener('change', generateOrderSummary);
 
-  .checkout-container {
-    padding: 16px;
-  }
-}
+    // Call the function to generate the summary on page load
+    generateOrderSummary();
 
-  }
-</script>
+    // Payment handling
+    function pay(method) {
+      alert(`You selected: ${method} payment`);
+      // Implement payment logic here
+    }
+  </script>
+
+</body>
+</html>
