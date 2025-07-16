@@ -6,12 +6,6 @@
   <input id="postcode" placeholder="Postcode" style="width: 100%; margin-bottom: 12px; padding: 8px;">
   <input id="city" placeholder="City" style="width: 100%; margin-bottom: 12px; padding: 8px;">
 
-  <h3>Delivery Option</h3>
-  <select id="deliveryOption" style="width: 100%; margin-bottom: 20px; padding: 8px;">
-    <option value="0">Standard Shipping (RM0)</option>
-    <option value="800">Express Shipping (RM8.00)</option>
-  </select>
-
   <h3>Order Summary</h3>
   <p>Item: <strong>PLAIN SQUARE - BREEZY BEACH PLUM</strong></p>
   <p>Item Price: <strong>RM <span id="itemAmount">29.90</span></strong></p>
@@ -50,17 +44,39 @@
   const itemAmountInSen = 2990; // Harga item dalam sen
 
   // Kemaskini shipping fee dan total amount apabila pengguna memilih penghantaran
-  document.getElementById("deliveryOption").addEventListener("change", function () {
-    const shipping = parseFloat(this.value); // Dapatkan nilai shipping
-    document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2); // Kemas kini shipping fee
-    const total = itemPrice + shipping / 100; // Kira jumlah keseluruhan
-    document.getElementById("totalAmount").textContent = total.toFixed(2); // Kemas kini jumlah total
+  document.getElementById("postcode").addEventListener("input", function () {
+    const postcode = document.getElementById("postcode").value.trim();
+
+    // Tentukan kadar penghantaran berdasarkan postcode
+    let shipping = 0;
+
+    // Semenanjung Malaysia (Postcode bermula dengan 1-9)
+    if (postcode && postcode.match(/^[1-9][0-9]{3}$/)) {
+      // Semenanjung Malaysia, RM10
+      shipping = 1000;
+    } 
+    // Sabah & Sarawak (Postcode bermula dengan 8 atau 9)
+    else if (postcode && (postcode.startsWith("8") || postcode.startsWith("9"))) {
+      // Sabah & Sarawak, RM19
+      shipping = 1900;
+    }
+
+    // Kemas kini shipping fee dan total amount
+    if (shipping > 0) {
+      document.getElementById("shippingFee").textContent = (shipping / 100).toFixed(2);
+      const total = itemPrice + shipping / 100;
+      document.getElementById("totalAmount").textContent = total.toFixed(2);
+    } else {
+      // Jika tidak sah, set penghantaran kepada RM0
+      document.getElementById("shippingFee").textContent = "0.00";
+      document.getElementById("totalAmount").textContent = itemPrice.toFixed(2);
+    }
   });
 
   // Fungsi pembayaran apabila kaedah dipilih
   async function pay(method) {
     // Ambil data penghantaran
-    const shipping = parseFloat(document.getElementById("deliveryOption").value);
+    const shipping = parseFloat(document.getElementById("shippingFee").textContent) * 100; // Tukar kepada sen
     const totalAmount = itemAmountInSen + shipping; // Jumlah dalam sen
 
     const body = {
