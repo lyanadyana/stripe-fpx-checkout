@@ -1,0 +1,7 @@
+{
+  "name": "stripe-fpx-checkout",
+  "version": "1.0.0",
+  "dependencies": {
+    "stripe": "^12.15.0"
+  }
+}
